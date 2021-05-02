@@ -9,28 +9,32 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
-  region: eu-central-1
+  region: ${file(./variables.yml):region}
   role: ${file(./variables.yml):lambdarole}
   versionFunctions: false
   tags:
     project: Psimplify
-    resource: users
+  httpApi:
+    authorizers:
+      serviceAuthorizer: ${file(./variables.yml):cognitouserpool}
   environment:
-    TABLE_NAME: users
+    AWS_REGION: ${file(./variables.yml):region}
 
 functions:
-  register:
-    handler: user.register
+  users:
+    handler: src/adapters/api/users
     events:
-      - http:
-          path: users
-          method: post
-  getUserById:
-    handler: user.getById
+      - cognitoUserPool:
+        pool: Psimplify
+        trigger: PostConfirmation
+        existing: true
+  user:
+    handler: src/adapters/api/users/id
     events:
-      - http:
-          path: users/{id}
-          method: get
+      - httpApi:
+        path: users/{id}
+        method: get
+        authorizer: serviceAuthorizer
 
 # you can add CloudFormation resource templates here
 #resources:
@@ -39,7 +43,3 @@ functions:
 #      Type: AWS::S3::Bucket
 #      Properties:
 #        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"

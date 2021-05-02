@@ -1,0 +1,1 @@
+import makeApiCallback from './plug';
