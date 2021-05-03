@@ -22,14 +22,14 @@ provider:
 
 functions:
   users:
-    handler: src/adapters/api/users
+    handler: src/framework/aws/cognito/register
     events:
       - cognitoUserPool:
         pool: Psimplify
         trigger: PostConfirmation
         existing: true
   user:
-    handler: src/adapters/api/users/id
+    handler: src/framework/aws/api/users/getUser
     events:
       - httpApi:
         path: users/{id}

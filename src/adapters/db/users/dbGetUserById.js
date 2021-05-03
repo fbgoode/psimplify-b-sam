@@ -1,12 +1,12 @@
 import docClient from '../../../framework/aws/dynamodb';
-import {PutCommand} from "@aws-sdk/lib-dynamodb";
+import {GetCommand} from "@aws-sdk/lib-dynamodb";
 const TableName = 'users';
 
 export default async function dbGetUserById (userId) {
   return await docClient.send(
-    new PutCommand({
+    new GetCommand({
       TableName,
-      Item: {
+      Key: {
         userId
       }
     })
